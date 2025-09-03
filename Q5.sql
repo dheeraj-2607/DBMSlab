@@ -26,7 +26,9 @@ INSERT INTO Customer (customer_id, customer_name, customer_city) VALUES
 (105, 'Karan Mehta', 'Mumbai'),
 (106, 'Divya Krishnan', 'Chennai'),
 (107, 'Alok Verma', 'Lucknow'),
-(108, 'Simran Kaur', 'Chandigarh');
+(108, 'Simran Kaur', 'Chandigarh'),
+(109, 'Anshul Ghosh', 'Haryana'),
+(110, 'Harsha Bhosle', 'UP');
 
 INSERT INTO Savings (customer_id, branch_id, saving_accno, balance) VALUES
 (101, 1, 5001001, 75000),   
@@ -36,7 +38,9 @@ INSERT INTO Savings (customer_id, branch_id, saving_accno, balance) VALUES
 (105, 5, 5005005, 92000),   
 (106, 6, 5006006, 51000),   
 (107, 7, 5007007, 37000),   
-(108, 8, 5008008, 68000);  
+(108, 8, 5008008, 68000),
+(102, 4, 5001015, 50000),
+(102, 6, 5001017, 70000);
 
 INSERT INTO Loan (customer_id, branch_id, loan_accno, balance) VALUES
 (101, 1, 7001001, 250000),   
@@ -46,7 +50,10 @@ INSERT INTO Loan (customer_id, branch_id, loan_accno, balance) VALUES
 (105, 5, 7005005, 400000),   
 (106, 6, 7006006, 220000),   
 (107, 7, 7007007, 180000),   
-(108, 8, 7008008, 260000);  
+(108, 8, 7008008, 260000); 
+(110, 4, 7008009, 30000),
+(110, 6, 7008019, 38000),
+(110, 7, 7008015, 49000);
 
 
 --a)
