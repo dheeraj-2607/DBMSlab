@@ -77,6 +77,7 @@ SELECT C.customer_id,C.customer_name,COUNT(L.customer_id) AS no_of_lacc FROM Cus
 SELECT B.branch_id,B.branch_name,L.balance AS max FROM Branch B LEFT JOIN Loan L ON B.branch_id = L.branch_id ORDER BY L.balance DESC LIMIT 1;
 
 --h)
+SELECT B.branch_id,B.branch_name FROM Branch B LEFT JOIN Loan L ON B.branch_id=L.branch_id WHERE L.branch_id IS NULL ;
 
 
 --i)
