@@ -53,3 +53,23 @@ INSERT INTO Loan (customer_id, branch_id, loan_accno, balance) VALUES
 SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Branch B ON S.branch_id = B.branch_id;
 
 --b)
+SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Branch B ON S.branch_id = B.branch_id WHERE branch_city = "Delhi";
+
+--c)
+SELECT C.customer_id,C.customer_name,COUNT(S.customer_id) AS no_of_acc FROM Customer C LEFT JOIN Savings S ON C.customer_id=S.customer_id GROUP BY C.customer_id,C.customer_name,S.customer_id HAVING COUNT(S.customer_id)>1;
+
+--d)
+
+
+--e)
+SELECT C.customer_id,C.customer_name,COUNT(L.customer_id) AS no_of_lacc FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id=L.customer_id GROUP BY  C.customer_id,C.customer_name,L.customer_id HAVING COUNT(S.customer_id)=0 AND COUNT(L.customer_id)>2;
+
+--f)
+
+--g)
+
+
+--h)
+
+
+--i)
