@@ -43,3 +43,5 @@ SELECT B.title FROM Books B LEFT JOIN Book_Issue I ON B.accession_no = I.accessi
 SELECT name FROM Member WHERE number_of_books_issued = max_limit;
 
 --c)
+
+--d)
