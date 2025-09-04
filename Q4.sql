@@ -43,6 +43,6 @@ SELECT B.title FROM Books B LEFT JOIN Book_Issue I ON B.accession_no = I.accessi
 SELECT name FROM Member WHERE number_of_books_issued = max_limit;
 
 --c)
---SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) FROM Course C LEFT JOIN Enrolment E ON C.course_id= E.course_id GROUP BY C.name,C.fee,C.duration_in_month ORDER BY COUNT(E.c_name) ASC LIMIT 1;
+SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) ASC;
 
 --d)
