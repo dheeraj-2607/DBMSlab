@@ -43,6 +43,7 @@ SELECT B.title FROM Books B LEFT JOIN Book_Issue I ON B.accession_no = I.accessi
 SELECT name FROM Member WHERE number_of_books_issued = max_limit;
 
 --c)
-SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) ASC;
+SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) DESC LIMIT 1;
+SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) ASC LIMIT 1;
 
 --d)
