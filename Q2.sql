@@ -33,24 +33,41 @@ INSERT INTO Book VALUES (10003, 'Hamlet', 'Penguin', 'Shakespeare', '2017-06-22'
 
 
 --a)
-SELECT title,COUNT(title) AS copies FROM Book GROUP BY title;
+SELECT title,COUNT(title) AS copies 
+    FROM Book GROUP BY title;
 
 --b)
-SELECT title,COUNT(title) AS copies FROM Book WHERE status = "reference" GROUP BY title;
+SELECT title,COUNT(title) AS copies 
+    FROM Book WHERE status = "reference" 
+    GROUP BY title;
 
 --c)
-SELECT title,COUNT(title) AS copies FROM Book WHERE status = "issued" GROUP BY title;
-SELECT title,COUNT(title) AS copies FROM Book WHERE status = "present in Library" OR status = "reference" OR status = "cannot be issue" GROUP BY title;
-SELECT title,COUNT(title) AS copies FROM Book WHERE status = "reference" GROUP BY title;
+SELECT title,COUNT(title) AS copies 
+    FROM Book 
+    WHERE status = "issued" 
+    GROUP BY title;
+SELECT title,COUNT(title) AS copies 
+    FROM Book 
+    WHERE status = "present in Library" OR status = "reference" OR status = "cannot be issue" 
+    GROUP BY title;
+SELECT title,COUNT(title) AS copies 
+    FROM Book 
+    WHERE status = "reference" 
+    GROUP BY title;
 
 
 
 --d)
-SELECT * FROM Book WHERE status = "cannot be issue" ORDER BY publisher ASC;
+SELECT * 
+    FROM Book 
+    WHERE status = "cannot be issue" 
+    ORDER BY publisher ASC;
 
 
 --e)
-SELECT * FROM Book  WHERE TIMESTAMPDIFF(MONTH, date_of_purchase, CURDATE()) < 6;
+SELECT * 
+    FROM Book  
+    WHERE TIMESTAMPDIFF(MONTH, date_of_purchase, CURDATE()) < 6;
 
 
 

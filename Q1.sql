@@ -23,16 +23,24 @@ INSERT INTO Faculty (college_code, faculty_code, faculty_name, qualification, ex
     (101, 303, 'Anil', 'PhD', 22, 'Computer Sci', 'Thrissur');
 
 --a)
-SELECT F.faculty_name,F.experience,C.college_name FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code WHERE F.experience>10 AND C.college_name="IIT Madras";
+SELECT F.faculty_name,F.experience,C.college_name 
+    FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code 
+    WHERE F.experience>10 AND C.college_name="IIT Madras";
 
 
 --b)
-SELECT F.faculty_name,F.experience,C.college_name FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code WHERE F.experience>10 AND C.college_name ="NIT Calicut" AND F.qualification != "M.Tech ECE";
+SELECT F.faculty_name,F.experience,C.college_name 
+    FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code 
+    WHERE F.experience>10 AND C.college_name ="NIT Calicut" AND F.qualification != "M.Tech ECE";
 
 --c)
-SELECT F.faculty_name,F.department,F.experience FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code WHERE C.college_name = "NIT Calicut" ORDER BY F.department ASC,F.experience ASC;
+SELECT F.faculty_name,F.department,F.experience 
+    FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code 
+    WHERE C.college_name = "NIT Calicut" ORDER BY F.department ASC,F.experience ASC;
 
 --d)
-SELECT C.college_name,COUNT(F.faculty_name) AS n FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code GROUP BY C.college_name HAVING COUNT(F.faculty_name)>1 ;
+SELECT C.college_name,COUNT(F.faculty_name) AS n 
+    FROM Faculty F LEFT JOIN College C ON C.college_code=F.college_code 
+    GROUP BY C.college_name HAVING COUNT(F.faculty_name)>1 ;
 
 --e)
