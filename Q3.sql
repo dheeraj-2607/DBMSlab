@@ -73,3 +73,8 @@ SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) FROM Course C LEFT JOIN 
 SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) FROM Course C LEFT JOIN Enrolment E ON C.course_id= E.course_id GROUP BY C.name,C.fee,C.duration_in_month ORDER BY COUNT(E.c_name) ASC LIMIT 1;
 
 --e)
+SELECT S.roll_no, S.name, S.date_of_birth
+FROM Student S
+JOIN Enrolment E ON S.roll_no = E.roll_no
+GROUP BY S.roll_no, S.name, S.date_of_birth
+HAVING COUNT(E.course_id) = (SELECT COUNT(*) FROM Course);

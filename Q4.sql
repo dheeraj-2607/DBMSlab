@@ -32,7 +32,8 @@ INSERT INTO Book_Issue (accession_no, member_id, date_of_issue) VALUES
         (1001, 1, '2025-08-05'),  
         (1002, 2, '2025-08-10'),  
         (1007, 3, '2025-08-14'),  
-        (1006, 5, '2025-08-20'),  
+        (1006, 5, '2025-08-20'),
+        (1006, 6, '2025-08-20'),  
         (1009, 7, '2025-08-25'); 
 
 
@@ -43,7 +44,16 @@ SELECT B.title FROM Books B LEFT JOIN Book_Issue I ON B.accession_no = I.accessi
 SELECT name FROM Member WHERE number_of_books_issued = max_limit;
 
 --c)
-SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) DESC LIMIT 1;
-SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) FROM Books B LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase ORDER BY COUNT(I.accession_no) ASC LIMIT 1;
+CREATE VIEW bcount AS
+SELECT B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase,COUNT(I.accession_no) AS book_count
+        FROM Books B
+        LEFT JOIN Book_Issue I ON B.accession_no=I.accession_no
+        GROUP BY B.accession_no,B.title,B.publisher,B.year,B.date_of_purchase;
 
+SELECT title, book_count
+    FROM bcount
+    WHERE book_count = (SELECT MAX(book_count) FROM bcount);
+SELECT title, book_count
+    FROM bcount
+    WHERE book_count = (SELECT MIN(book_count) FROM bcount);
 --d)

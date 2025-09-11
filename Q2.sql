@@ -30,6 +30,7 @@ INSERT INTO Book VALUES (9003, 'Physics Fund.', 'Oxford', 'Halliday', '2018-07-2
 INSERT INTO Book VALUES (10001, 'Hamlet', 'Penguin', 'Shakespeare', '2017-06-11', '2005-03-15', 'present in Library');
 INSERT INTO Book VALUES (10002, 'Hamlet', 'Penguin', 'Shakespeare', '2017-06-18', '2005-03-15', 'issued');
 INSERT INTO Book VALUES (10003, 'Hamlet', 'Penguin', 'Shakespeare', '2017-06-22', '2005-03-15', 'reference');
+INSERT INTO Book VALUES (10003, 'Hamlet', 'Penguin', 'Shakespeare', '2025-06-22', '2025-09-15', 'reference');
 
 
 --a)
@@ -72,5 +73,14 @@ SELECT *
 
 
 --f)
- SELECT * FROM Book  WHERE  TIMESTAMPDIFF(YEAR, date_of_purchase, CURDATE()) < 1; 
- -- SELECT accession_no,title,publisher,author,date_of_purchase,date_of_publishing FROM Book  WHERE  status = "present in Library" OR status = "reference" OR status = "cannot be issue" GROUP BY accession_no,title,publisher,author,date_of_purchase,date_of_publishing HAVING COUNT(title) < 10 ; 
+SELECT
+    title,
+    COUNT(accession_no) AS total_copies
+FROM
+    Book
+WHERE
+    date_of_purchase <= DATE_ADD(date_of_publishing, INTERVAL 1 YEAR)
+GROUP BY
+    title
+HAVING
+    COUNT(accession_no) > 10;

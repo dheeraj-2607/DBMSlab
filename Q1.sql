@@ -44,3 +44,16 @@ SELECT C.college_name,COUNT(F.faculty_name) AS n
     GROUP BY C.college_name HAVING COUNT(F.faculty_name)>1 ;
 
 --e)
+CREATE VIEW fcount AS
+SELECT C.college_name,COUNT(F.faculty_code) AS faculty_count
+    FROM College C
+    JOIN Faculty F ON C.college_code = F.college_code
+    GROUP BY C.college_name;
+
+SELECT college_name, faculty_count
+    FROM fcount
+    WHERE faculty_count = (SELECT MAX(faculty_count) FROM fcount);
+
+SELECT college_name, faculty_count
+    FROM fcount
+    WHERE faculty_count = (SELECT MIN(faculty_count) FROM fcount);
