@@ -26,7 +26,7 @@ CREATE TABLE Companions (
     Name VARCHAR(100) ,
     Gender VARCHAR(10),
     MobileNumber VARCHAR(15),
-    ResidentID INT ,
+    ResidentID INT
 );
 CREATE TABLE Rooms (
     RoomNumber INT PRIMARY KEY,
@@ -40,7 +40,7 @@ CREATE TABLE BookingDetails (
     RoomNumber INT ,
     CheckInDate DATE ,
     CheckOutDate DATE ,
-    NumberOfCompanions INT,
+    NumberOfCompanions INT
 );
 CREATE TABLE FoodItems (
     FoodItemID INT ,
@@ -53,7 +53,7 @@ CREATE TABLE FoodOrders (
     BookingID INT ,
     FoodItemID INT ,
     Quantity INT ,
-    OrderDate DATE,
+    OrderDate DATE
 );
 
 INSERT INTO Employees (EmployeeID, Name, Address, AadharNumber, MobileNumber, EmailID, JoiningDate, Salary) VALUES
@@ -109,16 +109,20 @@ VALUES
 
 INSERT INTO BookingDetails (BookingID, ResidentID, RoomNumber, CheckInDate, CheckOutDate, NumberOfCompanions)
 VALUES
-(1, 1, 101, '2025-09-01', '2025-09-05', 0),
+(1, 1, 101, '2025-09-01', '2025-09-05', 2),
 (2, 2, 102, '2025-09-02', '2025-09-06', 1), 
-(3, 3, 103, '2025-09-03', '2025-09-07', 0), 
+(3, 3, 103, '2025-09-03', '2025-09-07', 3), 
 (4, 4, 104, '2025-09-04', '2025-09-08', 1), 
-(5, 5, 105, '2025-09-05', '2025-09-09', 0), 
+(5, 5, 105, '2025-09-05', '2025-09-09', 4), 
 (6, 6, 106, '2025-09-06', '2025-09-10', 1), 
-(7, 7, 107, '2025-09-07', '2025-09-11', 0), 
-(8, 8, 108, '2025-09-08', '2025-09-12', 1), 
-(9, 9, 109, '2025-09-09', '2025-09-13', 0),
-(10, 10, 110, '2025-09-10', '2025-09-14', 1); 
+(7, 7, 107, '2025-09-07', '2025-09-11', 3), 
+(8, 8, 108, '2025-09-08', '2025-09-12', 5), 
+(9, 9, 109, '2025-09-09', '2025-09-13', 2),
+(10, 10, 110, '2025-09-10', '2025-09-14', 3),
+(11, 5, 105, '2025-09-11', '2025-09-19', 2),
+(12, 5, 105, '2025-09-15', '2025-09-19', 4); 
+
+
 
 INSERT INTO FoodItems (FoodItemID, FoodItem, Type, Price)
 VALUES
@@ -146,4 +150,60 @@ VALUES
 (9, 8, 8, 2, '2025-09-09'), 
 (10, 9, 10, 1, '2025-09-10'), 
 (11, 10, 2, 2, '2025-09-11'), 
-(12, 10, 1, 1, '2025-09-12');
+(12, 10, 1, 1, '2025-09-12'),
+(13, 11, 3, 1, '2025-09-13'),
+(14, 12, 6, 3, '2025-09-13'),
+(15, 10, 3, 1, '2025-09-14'),
+(16, 11, 10, 2, '2025-09-14'),
+(17, 10, 3, 4, '2025-09-15'),
+(18, 8, 2, 1, '2025-09-16'),
+(19, 6, 5, 3, '2025-09-16'),
+(20, 7, 3, 2, '2025-09-17'),
+(21, 1, 3, 1, '2025-09-18');
+
+--a)
+SELECT R.ResidentID,R.Name,R.Address,R.Gender,R.Age,R.MobileNumber 
+    FROM Residents R 
+    LEFT JOIN BookingDetails B ON R.ResidentID=B.ResidentID 
+    WHERE B.NumberOfCompanions >= 3;
+--b)
+SELECT R.ResidentID,R.Name,R.Address,R.Gender,R.Age,R.MobileNumber,B.NumberOfCompanions 
+    FROM Residents R    
+    LEFT JOIN BookingDetails B ON R.ResidentID=B.ResidentID 
+    WHERE CheckInDate >= '2025-09-01' AND CheckOutDate <= '2025-09-09' ;
+
+--c)
+SELECT R.ResidentID,R.Name,R.Address,R.Gender,R.Age,R.MobileNumber 
+FROM Residents R 
+LEFT JOIN BookingDetails B ON R.ResidentID=B.ResidentID 
+LEFT JOIN Rooms Q ON Q.RoomNumber = B.RoomNumber 
+WHERE Q.RoomType='AC' 
+GROUP BY R.ResidentID,R.Name,R.Address,R.Gender,R.Age,R.MobileNumber 
+HAVING COUNT(B.ResidentID)>2 AND COUNT(DISTINCT B.BookingID)>1;
+
+--d)
+CREATE VIEW ordercount AS
+SELECT I.FoodItemID, I.FoodItem, I.Type, I.Price,COUNT(F.FoodItemID) AS count
+    FROM FoodOrders F
+    JOIN FoodItems I ON I.FoodItemID = F.FoodItemID
+    GROUP BY I.FoodItemID, I.FoodItem, I.Type, I.Price;
+
+    SELECT FoodItemID, FoodItem, Type, Price
+    FROM ordercount
+    WHERE count = (SELECT MAX(count) FROM ordercount);
+
+    SELECT FoodItemID, FoodItem, Type, Price
+    FROM ordercount
+    WHERE count = (SELECT MIN(count) FROM ordercount);
+
+   
+--e)
+CREATE VIEW ordercount AS
+SELECT I.FoodItemID, I.FoodItem, I.Type, I.Price,F.OrderDate,COUNT(F.FoodItemID) AS count
+    FROM FoodOrders F
+    JOIN FoodItems I ON I.FoodItemID = F.FoodItemID
+    GROUP BY I.FoodItemID, I.FoodItem, I.Type, I.Price,F.OrderDate;
+SELECT FoodItemID,FoodItem,Type,Price
+    FROM ordercount 
+    WHERE OrderDate >= '2025-09-02' AND OrderDate <= '2025-09-09' AND count = (SELECT MAX(count) FROM ordercount) 
+    ORDER BY Price ASC;

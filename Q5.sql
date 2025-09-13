@@ -28,7 +28,12 @@ INSERT INTO Customer (customer_id, customer_name, customer_city) VALUES
 (107, 'Alok Verma', 'Lucknow'),
 (108, 'Simran Kaur', 'Chandigarh'),
 (109, 'Anshul Ghosh', 'Haryana'),
-(110, 'Harsha Bhosle', 'UP');
+(110, 'Harsha Bhosle', 'UP'),
+(111, 'Raghav Jain', 'Punjab'),
+(112, 'Nina Kapoor', 'Rajasthan'),
+(113, 'Vikram Singh', 'Gujarat'),
+(114, 'Meera Das', 'Odisha'),
+(115, 'Aditya Joshi', 'Maharashtra');
 
 INSERT INTO Savings (customer_id, branch_id, saving_accno, balance) VALUES
 (101, 1, 5001001, 75000),   
@@ -40,7 +45,12 @@ INSERT INTO Savings (customer_id, branch_id, saving_accno, balance) VALUES
 (107, 7, 5007007, 37000),   
 (108, 8, 5008008, 68000),
 (102, 4, 5001015, 50000),
-(102, 6, 5001017, 70000);
+(102, 6, 5001017, 70000),
+(111, 3, 5003013, 45000),
+(112, 5, 5005014,62000),
+(113, 1, 5001019, 72000),
+(114, 7, 5007018, 48000),
+(115, 2, 5002016, 56000);
 
 INSERT INTO Loan (customer_id, branch_id, loan_accno, balance) VALUES
 (101, 1, 7001001, 250000),   
@@ -66,87 +76,48 @@ SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C
 SELECT C.customer_id,C.customer_name,COUNT(S.customer_id) AS no_of_acc FROM Customer C LEFT JOIN Savings S ON C.customer_id=S.customer_id GROUP BY C.customer_id,C.customer_name,S.customer_id HAVING COUNT(S.customer_id)>1;
 
 --d)
--- Customers who do NOT have a savings account but have a loan
-SELECT DISTINCT customer_id, customer_name, customer_city
-FROM Customer
-NATURAL JOIN Loan
-WHERE customer_id NOT IN (SELECT customer_id FROM Savings);
+SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Loan L ON C.customer_id = L.customer_id LEFT JOIN Savings S ON C.customer_id = S.customer_id WHERE S.customer_id IS NULL;
+SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id = L.customer_id WHERE L.customer_id IS NULL;
+SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id = L.customer_id WHERE L.customer_id IS NOT NULL AND S.customer_id IS NOT NULL;
 
--- Customers who do NOT have a loan but have a savings account
-SELECT DISTINCT customer_id, customer_name, customer_city
-FROM Customer
-NATURAL JOIN Savings
-WHERE customer_id NOT IN (SELECT customer_id FROM Loan);
-
-
--- Customers who have BOTH a loan and a savings account
-
---  views with only customer_id for joining
-CREATE VIEW Savings_Customers AS SELECT customer_id FROM Savings;
-CREATE VIEW Loan_Customers AS SELECT customer_id FROM Loan;
-
--- Customers who have BOTH a loan and a savings account
-SELECT customer_id, customer_name, customer_city
-FROM Customer
-NATURAL JOIN Savings_Customers
-NATURAL JOIN Loan_Customers;
 
 
 --e)
 SELECT C.customer_id,C.customer_name,COUNT(L.customer_id) AS no_of_lacc FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id=L.customer_id GROUP BY  C.customer_id,C.customer_name,L.customer_id HAVING COUNT(S.customer_id)=0 AND COUNT(L.customer_id)>2;
 
 --f)
--- total number of customers for each branch
-SELECT branch_id, branch_name, COUNT( customer_id) as total_customers
-FROM Branch
-NATURAL JOIN All_Accounts
-GROUP BY branch_id;
 
--- total number of customers with only a loan
 
--- View customers who have only loan (no savings)
+
+
+
 CREATE VIEW Customers_With_Only_Loan AS
 SELECT customer_id, branch_id
 FROM Loan
 WHERE customer_id NOT IN (SELECT customer_id FROM Savings);
 
---  query per-branch count 
 SELECT branch_id, branch_name,
 	COUNT(customer_id) AS loan_only_customers
 FROM Branch
 LEFT JOIN Customers_With_Only_Loan USING (branch_id) -- [LEFT JOIN : left - Branch (use full col) right - Customers_With_Only_Loan(show only col match with left)]
-GROUP BY branch_id;
+GROUP BY branch_id,branch_name;
 
--- total number of customers with only a savings account
-
--- View customers who have only savings (no loan)
 CREATE VIEW Customers_With_Only_Savings AS
 SELECT customer_id, branch_id
 FROM Savings
 WHERE customer_id NOT IN (SELECT customer_id FROM Loan);
 
---  query
 SELECT branch_id, branch_name,
        COUNT(customer_id) AS savings_only_customers
 FROM Branch
 LEFT JOIN Customers_With_Only_Savings USING (branch_id)  -- [LEFT JOIN : left - Branch (use full col) right - Customers_With_Only_Savings(show only col match with left)]
-GROUP BY branch_id;
+GROUP BY branch_id,branch_name;
 
--- total number of customers with both loan and savings accounts
 
--- View: customers with both loan and savings accounts
-CREATE VIEW Customers_Having_Loan_And_Savings AS
-SELECT customer_id
-FROM Savings
-WHERE customer_id IN (SELECT customer_id FROM Loan);
 
---  query
-SELECT branch_id, branch_name,
-       COUNT(customer_id) AS Customers_Having_Loan_And_Savings
-FROM Branch
-NATURAL JOIN All_Accounts
-LEFT JOIN Customers_Having_Loan_And_Savings USING (customer_id) -- [LEFT JOIN : left - All_Accounts (use full col) right - Customers_Having_Loan_And_Savings(show only col match with left)]
-GROUP BY branch_id;
+
+
+
 
 --g)
 SELECT B.branch_id,B.branch_name,L.balance AS max FROM Branch B LEFT JOIN Loan L ON B.branch_id = L.branch_id ORDER BY L.balance DESC LIMIT 1;

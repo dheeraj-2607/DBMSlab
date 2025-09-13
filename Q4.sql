@@ -1,6 +1,6 @@
 USE Dheeraj;
 CREATE TABLE Books (accession_no INT ,title VARCHAR(20) ,publisher VARCHAR(20),year INT,date_of_purchase DATE ,status VARCHAR(25));
-CREATE TABLE Member (member_id INT ,name VARCHAR(20) ,number_of_books_issued INT ,max_limit INT);
+CREATE TABLE Member (member_id INT ,name VARCHAR(20) ,number_of_Book_Issued INT ,max_limit INT);
 CREATE TABLE Book_Issue (accession_no INT ,member_id INT ,date_of_issue DATE);
 
 
@@ -16,7 +16,7 @@ INSERT INTO Books (accession_no, title, publisher, year, date_of_purchase, statu
         (1009, 'Web Dev Guide', 'Oreilly', 2021, '2022-09-17', 'cannot be issued'),
         (1010, 'Python Crash', 'No Starch', 2020, '2022-10-21', 'reference');
 
-INSERT INTO Member (member_id, name, number_of_books_issued, max_limit) VALUES
+INSERT INTO Member (member_id, name, number_of_Book_Issued, max_limit) VALUES
         (1, 'Amit Sharma', 2, 5),
         (2, 'Priya Nair', 1, 4),
         (3, 'Rohan Mehta', 3, 5),
@@ -41,7 +41,7 @@ INSERT INTO Book_Issue (accession_no, member_id, date_of_issue) VALUES
 SELECT B.title FROM Books B LEFT JOIN Book_Issue I ON B.accession_no = I.accession_no WHERE TIMESTAMPDIFF(DAY, I.date_of_issue, CURDATE()) > 15;
 
 --b)
-SELECT name FROM Member WHERE number_of_books_issued = max_limit;
+SELECT name FROM Member WHERE number_of_Book_Issued = max_limit;
 
 --c)
 CREATE VIEW bcount AS
@@ -56,4 +56,23 @@ SELECT title, book_count
 SELECT title, book_count
     FROM bcount
     WHERE book_count = (SELECT MIN(book_count) FROM bcount);
+
+
 --d)
+CREATE VIEW Bcount AS
+SELECT accession_no, COUNT(DISTINCT member_id) AS member_count
+FROM Book NATURAL JOIN Book_Issue
+GROUP BY accession_no;
+
+CREATE VIEW Total_Member AS
+SELECT COUNT(*) AS total_members
+FROM Member;
+
+SELECT DISTINCT accession_no, title, publisher, date_of_purchase, status
+FROM Book NATURAL JOIN Bcount, Total_Member
+WHERE member_count = total_members;
+
+SELECT DISTINCT accession_no, title, publisher, date_of_purchase, status
+FROM Book
+WHERE accession_no NOT IN (SELECT accession_no FROM Book_Issue);
+
