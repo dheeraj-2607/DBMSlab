@@ -66,7 +66,7 @@ SELECT *
 
 
 --e)
-SELECT * 
+SELECT DISTINCT * 
     FROM Book  
     WHERE TIMESTAMPDIFF(MONTH, date_of_purchase, CURDATE()) < 6;
 

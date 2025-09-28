@@ -68,7 +68,7 @@ CREATE VIEW Total_Member AS
 SELECT COUNT(*) AS total_members
 FROM Member;
 
-SELECT DISTINCT accession_no, title, publisher, date_of_purchase, status
+SELECT accession_no, title, publisher, date_of_purchase, status
 FROM Book NATURAL JOIN Bcount, Total_Member
 WHERE member_count = total_members;
 

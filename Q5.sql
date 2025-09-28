@@ -67,7 +67,7 @@ INSERT INTO Loan (customer_id, branch_id, loan_accno, balance) VALUES
 
 
 --a)
-SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Branch B ON S.branch_id = B.branch_id;
+SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Branch B ON S.branch_id = B.branch_id WHERE C.customer_city = B.branch_city;
 
 --b)
 SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Branch B ON S.branch_id = B.branch_id WHERE branch_city = "Delhi";
@@ -76,9 +76,9 @@ SELECT C.customer_id,C.customer_name,B.branch_name,B.branch_city FROM Customer C
 SELECT C.customer_id,C.customer_name,COUNT(S.customer_id) AS no_of_acc FROM Customer C LEFT JOIN Savings S ON C.customer_id=S.customer_id GROUP BY C.customer_id,C.customer_name,S.customer_id HAVING COUNT(S.customer_id)>1;
 
 --d)
-SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Loan L ON C.customer_id = L.customer_id LEFT JOIN Savings S ON C.customer_id = S.customer_id WHERE S.customer_id IS NULL;
+SELECT DISTINCT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Loan L ON C.customer_id = L.customer_id LEFT JOIN Savings S ON C.customer_id = S.customer_id WHERE S.customer_id IS NULL;
 SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id = L.customer_id WHERE L.customer_id IS NULL;
-SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id = L.customer_id WHERE L.customer_id IS NOT NULL AND S.customer_id IS NOT NULL;
+SELECT DISTINCT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id = L.customer_id WHERE L.customer_id IS NOT NULL AND S.customer_id IS NOT NULL;
 
 
 
@@ -86,34 +86,55 @@ SELECT C.customer_id,C.customer_name,C.customer_city FROM Customer C JOIN Saving
 SELECT C.customer_id,C.customer_name,COUNT(L.customer_id) AS no_of_lacc FROM Customer C LEFT JOIN Savings S ON C.customer_id = S.customer_id LEFT JOIN Loan L ON C.customer_id=L.customer_id GROUP BY  C.customer_id,C.customer_name,L.customer_id HAVING COUNT(S.customer_id)=0 AND COUNT(L.customer_id)>2;
 
 --f)
+--1)
+CREATE VIEW accounts AS
+SELECT customer_id, branch_id
+FROM Savings
+UNION
+SELECT customer_id, branch_id
+FROM Loan;
+
+SELECT branch_id, branch_name, COUNT(customer_id) as total_customers
+FROM Branch
+NATURAL JOIN accounts
+GROUP BY branch_id,branch_name;
 
 
-
-
-
-CREATE VIEW Customers_With_Only_Loan AS
+--2)
+CREATE VIEW only_loans AS
 SELECT customer_id, branch_id
 FROM Loan
 WHERE customer_id NOT IN (SELECT customer_id FROM Savings);
 
 SELECT branch_id, branch_name,
-	COUNT(customer_id) AS loan_only_customers
+	COUNT(customer_id) AS loans_only
 FROM Branch
-LEFT JOIN Customers_With_Only_Loan USING (branch_id) -- [LEFT JOIN : left - Branch (use full col) right - Customers_With_Only_Loan(show only col match with left)]
+LEFT JOIN only_loans USING (branch_id) 
 GROUP BY branch_id,branch_name;
-
-CREATE VIEW Customers_With_Only_Savings AS
+--3)
+CREATE VIEW only_savings AS
 SELECT customer_id, branch_id
 FROM Savings
 WHERE customer_id NOT IN (SELECT customer_id FROM Loan);
 
 SELECT branch_id, branch_name,
-       COUNT(customer_id) AS savings_only_customers
+       COUNT(customer_id) AS savings_only
 FROM Branch
-LEFT JOIN Customers_With_Only_Savings USING (branch_id)  -- [LEFT JOIN : left - Branch (use full col) right - Customers_With_Only_Savings(show only col match with left)]
+LEFT JOIN only_savings USING (branch_id)  
 GROUP BY branch_id,branch_name;
+--4)
+CREATE VIEW loan_savings AS
+SELECT customer_id
+FROM Savings
+WHERE customer_id IN (SELECT customer_id FROM Loan);
 
 
+SELECT branch_id, branch_name,
+       COUNT(customer_id) AS loan_savings
+FROM Branch
+NATURAL JOIN accounts
+LEFT JOIN loan_savings USING (customer_id) 
+GROUP BY branch_id, branch_name;
 
 
 
@@ -127,17 +148,17 @@ SELECT B.branch_id,B.branch_name FROM Branch B LEFT JOIN Loan L ON B.branch_id=L
 
 
 --i)
-CREATE VIEW Customer_Savings_Total AS
+CREATE VIEW savings_total AS
 SELECT customer_id, SUM(balance) as total_savings
 FROM Savings
 GROUP BY customer_id;
 
-CREATE VIEW Customer_Loans_Total AS
+CREATE VIEW loan_total AS
 SELECT customer_id, SUM(balance) as total_loans
 FROM Loan
 GROUP BY customer_id;
 
-SELECT customer_id,customer_name,total_savings as total_savings_balance, total_loans as total_loan_balance
+SELECT customer_id,customer_name,total_savings,total_loans
 FROM Customer
-LEFT JOIN Customer_Savings_Total USING (customer_id)
-LEFT JOIN Customer_Loans_Total USING (customer_id);
+LEFT JOIN savings_total USING (customer_id)
+LEFT JOIN loan_total USING (customer_id);

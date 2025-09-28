@@ -198,12 +198,12 @@ SELECT I.FoodItemID, I.FoodItem, I.Type, I.Price,COUNT(F.FoodItemID) AS count
 
    
 --e)
-CREATE VIEW ordercount AS
+CREATE VIEW ordercounts AS
 SELECT I.FoodItemID, I.FoodItem, I.Type, I.Price,F.OrderDate,COUNT(F.FoodItemID) AS count
     FROM FoodOrders F
     JOIN FoodItems I ON I.FoodItemID = F.FoodItemID
     GROUP BY I.FoodItemID, I.FoodItem, I.Type, I.Price,F.OrderDate;
 SELECT FoodItemID,FoodItem,Type,Price
-    FROM ordercount 
-    WHERE OrderDate >= '2025-09-02' AND OrderDate <= '2025-09-09' AND count = (SELECT MAX(count) FROM ordercount) 
+    FROM ordercounts
+    WHERE OrderDate >= '2025-09-02' AND OrderDate <= '2025-09-09' AND count = (SELECT MAX(count) FROM ordercounts) 
     ORDER BY Price ASC;
