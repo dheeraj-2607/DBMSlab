@@ -1,8 +1,8 @@
 USE Dheeraj;
 
-CREATE TABLE Student(roll_no INT ,name VARCHAR(20) ,date_of_birth DATE );
-CREATE TABLE Course(course_id INT ,name VARCHAR(20) ,duration_in_month INT );
-CREATE TABLE Enrolment (roll_no INT ,name VARCHAR(20) ,course_id INT ,c_name VARCHAR(20) );
+CREATE TABLE Student(roll_no INT, name VARCHAR(20), date_of_birth DATE);
+CREATE TABLE Course(course_id INT, name VARCHAR(20), fee INT, duration_in_month INT);
+CREATE TABLE Enrolment(roll_no INT, name VARCHAR(20), course_id INT, c_name VARCHAR(20));
 
 
 INSERT INTO Student (roll_no, name, date_of_birth)VALUES
@@ -60,17 +60,32 @@ INSERT INTO Enrolment (roll_no, name, course_id, c_name) VALUES
 
 
 --a)
-SELECT S.name FROM Student S LEFT JOIN Enrolment E ON S.roll_no = E.roll_no WHERE E.c_name = "B.Tech" AND (YEAR(CURDATE()) - YEAR(date_of_birth)) > 18;
+SELECT S.name
+FROM Student S
+JOIN Enrolment E ON S.roll_no = E.roll_no
+WHERE E.c_name = 'B.Tech'
+    AND TIMESTAMPDIFF(YEAR, S.date_of_birth, CURDATE()) > 18;
 
 --b)
-SELECT * FROM Course WHERE fee > (SELECT fee FROM Course WHERE name = "B.Tech");
+SELECT * FROM Course WHERE fee > (SELECT fee FROM Course WHERE name = 'B.Tech');
 
 --c)
-SELECT S.roll_no,S.name,S.date_of_birth FROM Student S LEFT JOIN Enrolment E ON S.roll_no = E.roll_no GROUP BY S.roll_no,S.name,S.date_of_birth HAVING COUNT(E.course_id)>2;
+SELECT S.roll_no, S.name, S.date_of_birth
+FROM Student S
+LEFT JOIN Enrolment E ON S.roll_no = E.roll_no
+GROUP BY S.roll_no, S.name, S.date_of_birth
+HAVING COUNT(E.course_id) > 2;
 
 --d)
-SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) FROM Course C LEFT JOIN Enrolment E ON C.course_id= E.course_id GROUP BY C.name,C.fee,C.duration_in_month ORDER BY COUNT(E.c_name) DESC LIMIT 1;
-SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) FROM Course C LEFT JOIN Enrolment E ON C.course_id= E.course_id GROUP BY C.name,C.fee,C.duration_in_month ORDER BY COUNT(E.c_name) ASC LIMIT 1;
+SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) 
+    FROM Course C 
+    LEFT JOIN Enrolment E ON C.course_id= E.course_id 
+    GROUP BY C.name,C.fee,C.duration_in_month 
+    ORDER BY COUNT(E.c_name) DESC LIMIT 1;
+SELECT C.name,C.fee,C.duration_in_month,COUNT(E.c_name) 
+    FROM Course C 
+    LEFT JOIN Enrolment E ON C.course_id= E.course_id 
+    GROUP BY C.name,C.fee,C.duration_in_month ORDER BY COUNT(E.c_name) ASC LIMIT 1;
 
 --e)
 SELECT S.roll_no, S.name, S.date_of_birth
