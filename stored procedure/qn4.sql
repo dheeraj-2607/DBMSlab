@@ -19,8 +19,8 @@ BEGIN
     	SET is_prime = TRUE;
 	SET i = 2;
 	WHILE i<num DO
-     		IF num % i = 0 THEN
-          		SET is_prime = FALSE;
+     	IF num % i = 0 THEN
+        	SET is_prime = FALSE;
        	END IF;
         	SET i = i + 1;
         END WHILE;
@@ -33,9 +33,7 @@ BEGIN
         END IF;
         SET num =num+1;
     END WHILE;
-    SELECT 'The prime numbers are the following....' AS MESSAGE;
     SELECT * FROM PRIME;
-    SELECT 'The composite numbers are the following....' AS MESSAGE;
     SELECT * FROM COMPOSITE;
     DROP TABLE PRIME;
     DROP TABLE COMPOSITE;
